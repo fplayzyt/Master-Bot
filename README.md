@@ -1,3 +1,7 @@
+(Este bot es una modificación a [Master-Bot](https://github.com/galnir/Master-Bot), por favor apoya el trabajo original.
+
+=============================================
+
 # A Discord Music Bot written in JavaScript, the discord.js library and discord.js-commando framework
 
 [![image](https://img.shields.io/badge/language-javascript-yellow)](https://www.javascript.com/)
