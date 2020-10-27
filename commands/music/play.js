@@ -12,7 +12,7 @@ module.exports = class PlayCommand extends Command {
       aliases: ['play-song', 'add'],
       memberName: 'play',
       group: 'music',
-      description: 'Play any song or playlist from youtube',
+      description: 'Reproduce cualquier cancion o lista de reproduccion de YouTube.',
       guildOnly: true,
       clientPermissions: ['SPEAK', 'CONNECT'],
       throttling: {
@@ -35,7 +35,7 @@ module.exports = class PlayCommand extends Command {
   async run(message, { query }) {
     const voiceChannel = message.member.voice.channel;
     if (!voiceChannel) {
-      message.say('Join a channel and try again');
+      message.say('Por favor, unete a un canal de voz primero antes de poner musica');
       return;
     }
 
@@ -51,13 +51,13 @@ module.exports = class PlayCommand extends Command {
       )
     ) {
       const playlist = await youtube.getPlaylist(query).catch(function() {
-        message.say('Playlist is either private or it does not exist!');
+        message.say('La lista de reproduccion dada es privada o no la puedo encontrar.');
         return;
       });
       // add 10 as an argument in getVideos() if you choose to limit the queue
       const videosArr = await playlist.getVideos().catch(function() {
         message.say(
-          'There was a problem getting one of the videos in the playlist!'
+          'Hubo un problema al obtener uno de los videos en la lista de reproduccion!'
         );
         return;
       });
@@ -114,7 +114,7 @@ module.exports = class PlayCommand extends Command {
         .split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
       const id = query[2].split(/[^0-9a-z_\-]/i)[0];
       const video = await youtube.getVideoByID(id).catch(function() {
-        message.say('There was a problem getting the video you provided!');
+        message.say('Hubo un problema al obtener el video solicitado!');
         return;
       });
       // // can be uncommented if you don't want the bot to play live streams
@@ -141,7 +141,7 @@ module.exports = class PlayCommand extends Command {
         message.guild.musicData.isPlaying = true;
         return PlayCommand.playSong(message.guild.musicData.queue, message);
       } else if (message.guild.musicData.isPlaying == true) {
-        message.say(`${video.title} added to queue`);
+        message.say(`> :warning: La cancion ${video.title} fue agregada a la lista.`);
         return;
       }
     }
@@ -149,7 +149,7 @@ module.exports = class PlayCommand extends Command {
     // if user provided a song/video name
     const videos = await youtube.searchVideos(query, 5).catch(async function() {
       await message.say(
-        'There was a problem searching the video you requested :('
+        'Hubo un problema intentando buscar el video que mencionabas.'
       );
       return;
     });
@@ -166,13 +166,13 @@ module.exports = class PlayCommand extends Command {
     vidNameArr.push('exit');
     const embed = new MessageEmbed()
       .setColor('#e9f931')
-      .setTitle('Choose a song by commenting a number between 1 and 5')
-      .addField('Song 1', vidNameArr[0])
-      .addField('Song 2', vidNameArr[1])
-      .addField('Song 3', vidNameArr[2])
-      .addField('Song 4', vidNameArr[3])
-      .addField('Song 5', vidNameArr[4])
-      .addField('Exit', 'exit');
+      .setTitle('Elige una cancion, respondiendo con un numero del 1 al 5.')
+      .addField('Cancion 1', vidNameArr[0])
+      .addField('Cancion 2', vidNameArr[1])
+      .addField('Cancion 3', vidNameArr[2])
+      .addField('Cancion 4', vidNameArr[3])
+      .addField('Cancion 5', vidNameArr[4])
+      .addField('Cancelar', 'Di "exit".');
     var songEmbed = await message.channel.send({ embed });
     message.channel
       .awaitMessages(
@@ -249,7 +249,7 @@ module.exports = class PlayCommand extends Command {
           songEmbed.delete();
         }
         message.say(
-          'Please try again and enter a number between 1 and 5 or exit'
+          'Por favor intenta de nuevo, di un numero del 1 al 5 o di exit.'
         );
         return;
       });
@@ -272,15 +272,16 @@ module.exports = class PlayCommand extends Command {
             const videoEmbed = new MessageEmbed()
               .setThumbnail(queue[0].thumbnail)
               .setColor('#e9f931')
-              .addField('Now Playing:', queue[0].title)
-              .addField('Duration:', queue[0].duration)
+              .setTitle(':musical_note: Cancion agregada.')
+              .addField('Ahora escuchas:', queue[0].title)
+              .addField('Duracion:', queue[0].duration)
               .setFooter(
-                `Requested by ${queue[0].memberDisplayName}`,
+                `Cancion pedida por ${queue[0].memberDisplayName}`,
                 queue[0].memberAvatar
               );
 
             if (queue[1] && !message.guild.musicData.loopSong)
-              videoEmbed.addField('Next Song:', queue[1].title);
+              videoEmbed.addField('Proxima cancion:', queue[1].title);
             message.say(videoEmbed);
             message.guild.musicData.nowPlaying = queue[0];
             queue.shift();
@@ -316,14 +317,14 @@ module.exports = class PlayCommand extends Command {
                     message.guild.me.voice.channel
                   ) {
                     message.guild.me.voice.channel.leave();
-                    message.channel.send('Left channel due to inactivity');
+                    message.channel.send('He dejado el canal de voz por inactividad.');
                   }
                 }, 90000);
               }
             }
           })
           .on('error', function(e) {
-            message.say('Cannot play song');
+            message.say('No se puede reproducir la cancion.');
             console.error(e);
             message.guild.musicData.queue.length = 0;
             message.guild.musicData.isPlaying = false;
@@ -335,7 +336,7 @@ module.exports = class PlayCommand extends Command {
           });
       })
       .catch(function() {
-        message.say('I have no permission to join your channel!');
+        message.say('No tengo los permisos necesarios para unirme a tu canal.');
         message.guild.musicData.queue.length = 0;
         message.guild.musicData.isPlaying = false;
         message.guild.musicData.nowPlaying = null;
