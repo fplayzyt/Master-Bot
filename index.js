@@ -36,10 +36,10 @@ const client = new CommandoClient({
 client.registry
   .registerDefaultTypes()
   .registerGroups([
-    ['music', 'Music Command Group'],
-    ['gifs', 'Gif Command Group'],
-    ['other', 'random types of commands group'],
-    ['guild', 'guild related commands']
+    ['music', 'Comandos de musica'],
+    ['gifs', 'Comandos de GIFs'],
+    ['other', 'Comandos sin categoria'],
+    ['guild', 'Moderacion de servidores']
   ])
   .registerDefaultGroups()
   .registerDefaultCommands({
@@ -50,10 +50,10 @@ client.registry
   .registerCommandsIn(path.join(__dirname, 'commands'));
 
 client.once('ready', () => {
-  console.log('Ready!');
-  client.user.setActivity(`${prefix}help`, {
+  console.log('[Master Bot-ES] El bot esta listo para funcionar.');
+  client.user.setActivity(`Mi prefijo es ${prefix}help`, {
     type: 'WATCHING',
-    url: 'https://github.com/galnir/Master-Bot'
+    url: 'https://github.com/fplayzyt/Master-Bot-ESt'
   });
 });
 
