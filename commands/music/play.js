@@ -230,7 +230,7 @@ module.exports = class PlayCommand extends Command {
               if (songEmbed) {
                 songEmbed.delete();
               }
-              message.say(`${video.title} added to queue`);
+              message.say(`${video.title} ha sido agregado a la lista.`);
               return;
             }
           })
